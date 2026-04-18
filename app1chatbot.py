@@ -1,5 +1,3 @@
-# ✅ FINAL ADVANCED AI CHATBOT (ALL FEATURES)
-
 import streamlit as st
 import nltk
 import spacy
@@ -7,9 +5,8 @@ import random
 import string
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from difflib import get_close_matches
 
-# Download (only first time)
+# Downloads
 nltk.download('punkt')
 nltk.download('punkt_tab')
 nltk.download('stopwords')
@@ -17,31 +14,30 @@ nltk.download('stopwords')
 # Load model
 nlp = spacy.load("en_core_web_sm")
 
-# Stopwords
 stop_words = set(stopwords.words('english'))
 
-# Knowledge base (multiple responses)
+# 🔥 Expanded dataset (IMPORTANT FIX)
 data = {
     "hello": ["Hi!", "Hello!", "Hey there!", "Hi, how can I help you?"],
+    "hi": ["Hello!", "Hi there!"],
     "how are you": ["I'm doing great!", "All good here!", "Feeling awesome!"],
-    "what do you do": ["I'm a helpful chatbot!", "I assist with various queries!"],
-    "what is python": ["Python is a powerful programming language."],
+    "what do you do": ["I am an AI chatbot. I answer your questions."],
+    "who are you": ["I am an AI chatbot created using NLP."],
+    "what is python": ["Python is a programming language."],
+    "python": ["Python is a powerful programming language."],
     "what is ai": ["AI stands for Artificial Intelligence."],
-    "who created you": ["I was created as part of an internship project by Muzzammil Sheikh. I'm here to assist you!"],
-    "what is your purpose": ["My purpose is to assist you with information and answer your questions."],
-    "what is your name": ["My name is Simchi!"],
+    "ai": ["Artificial Intelligence is the simulation of human intelligence."],
     "help": ["You can ask me about Python, AI, or general questions."],
-    "bye": ["Goodbye!", "See you soon!", "Take care!"]
+    "bye": ["Goodbye!", "See you later!", "Take care!"]
 }
 
 default_responses = [
     "I'm not sure I understand. Can you rephrase?",
-    "Interesting question! Try asking differently.",
+    "Try asking in a different way.",
     "I didn't get that. Ask something else."
 ]
 
-# ---------------- NLP ---------------- #
-
+# 🔹 Preprocess
 def preprocess(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
@@ -49,74 +45,61 @@ def preprocess(text):
     filtered = [word for word in tokens if word not in stop_words]
     return " ".join(filtered)
 
-# Spell correction (basic)
-def correct_spelling(user_input):
-    words = user_input.split()
-    corrected = []
-    for word in words:
-        matches = get_close_matches(word, data.keys(), n=1, cutoff=0.7)
-        if matches:
-            corrected.append(matches[0])
-        else:
-            corrected.append(word)
-    return " ".join(corrected)
-
-# ---------------- Chatbot Logic ---------------- #
-
+# 🔥 Improved Response Logic
 def chatbot_response(user_input):
+    user_input_lower = user_input.lower()
     processed_input = preprocess(user_input)
 
-    # Greeting detection
-    if any(word in user_input.lower() for word in ["hello", "hi", "hey"]):
-        return random.choice(data["hello"])
+    # ✅ 1. Direct match (BEST)
+    for key in data:
+        if key in user_input_lower:
+            return random.choice(data[key])
 
-    # Spell correction (optional)
-    processed_input = correct_spelling(processed_input)
+    # ✅ 2. Token match (NEW FIX)
+    for key in data:
+        if any(word in key for word in processed_input.split()):
+            return random.choice(data[key])
 
+    # ✅ 3. NLP similarity
     best_match = None
     highest_similarity = 0
 
     for key in data:
         sim = nlp(processed_input).similarity(nlp(key))
-        
         if sim > highest_similarity:
             highest_similarity = sim
             best_match = key
 
-    if highest_similarity > 0.7:
+    if highest_similarity > 0.5:
         return random.choice(data[best_match])
-    else:
-        return random.choice(default_responses)
 
-# ---------------- Context Handling ---------------- #
+    # ✅ 4. Fallback
+    return random.choice(default_responses)
+
+# ---------------- UI ---------------- #
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-
-# ---------------- UI ---------------- #
 
 st.set_page_config(page_title="AI Chatbot", page_icon="🤖")
 
 st.title("🤖 AI Chatbot")
 st.write("Ask me anything about Python, AI, or general queries!")
 
-# Input box
 user_input = st.text_input("You:")
 
-# When user sends message
 if user_input:
     response = chatbot_response(user_input)
 
-    # Save conversation
     st.session_state.chat_history.append(("You", user_input))
     st.session_state.chat_history.append(("Bot", response))
 
-# Display chat history
+# Display chat
 for sender, message in st.session_state.chat_history:
     if sender == "You":
-        st.markdown(f"**🧑 You:** {message}")
+        st.markdown(f"🧑 **You:** {message}")
     else:
-        st.markdown(f"**🤖 Bot:** {message}")
+        st.markdown(f"🤖 **Bot:** {message}")
 
 st.markdown("---")
-st.caption("Built using NLP (NLTK + spaCy) with Streamlit UI 🚀")
+st.caption("Improved NLP Chatbot with better matching 🚀")
