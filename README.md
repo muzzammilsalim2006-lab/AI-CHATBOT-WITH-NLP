@@ -1,4 +1,13 @@
 # AI-CHATBOT-WITH-NLP
+Candidate Name:- Mohammad Muzzammil Sheikh
+
+"INTERN ID":CTIS7880
+
+"DOMAIN": Python Programming
+
+"Duration":4 weeks
+
+"Mentor": NEELA SANTOSH
 
 This project presents the development of an intelligent AI chatbot built using Python, integrating Natural Language Processing (NLP) techniques to simulate human-like conversations. The chatbot was designed and implemented as part of an internship task, with the primary objective of understanding how machines can process, interpret, and respond to human language effectively. The development process began with setting up the required environment, where essential libraries such as NLTK and spaCy were installed and configured. NLTK was used for fundamental text preprocessing tasks including tokenization, stopword removal, and normalization, while spaCy was utilized to compute semantic similarity between user queries and predefined responses, enabling the chatbot to go beyond simple keyword matching.
 
